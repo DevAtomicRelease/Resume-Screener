@@ -2,11 +2,15 @@
 
 An intelligent Streamlit dashboard that analyzes resumes against job descriptions using NLP, Sentence Transformers, and Generative AI to rank candidates and generate structured hiring recommendations.
 
+<img width="1784" height="834" alt="image" src="https://github.com/user-attachments/assets/1fe1b9e5-8576-4bcc-8ce3-f5488a15bbe2" />
+
 ---
 
 ## Overview
 
 This project automates the initial stage of resume screening by combining multiple signals — semantic understanding, skill coverage, and keyword relevance — into a single composite score for each candidate. It is built around real NLP and ML concepts rather than simple keyword counting, making it suitable for roles that require candidates with experience in data science, machine learning, or AI engineering.
+
+<img width="1783" height="864" alt="Img01" src="https://github.com/user-attachments/assets/5fceda49-3ab8-4b07-81c0-4100769d214c" />
 
 ---
 
@@ -38,6 +42,8 @@ This project automates the initial stage of resume screening by combining multip
 | PDF Processing | pdfplumber |
 | Data Handling | Pandas, NumPy |
 | Visualization | Plotly |
+
+<img width="1761" height="859" alt="img02" src="https://github.com/user-attachments/assets/e5f5b3b7-b1ad-4003-aedd-9441be189cc9" />
 
 ---
 
