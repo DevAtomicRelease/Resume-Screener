@@ -11,9 +11,9 @@ GROQ_MAX_TOKENS = 1024
 GROQ_TEMPERATURE = 0.4
 
 # ── Similarity Thresholds ───────────────────────────────────────────────────
-THRESHOLD_STRONG = 75    # ≥ 75% → Strong Match
-THRESHOLD_MODERATE = 50  # ≥ 50% → Moderate Match
-# < 50% → Weak Match
+THRESHOLD_STRONG = 75    # >= 75% -> Strong Match
+THRESHOLD_MODERATE = 58  # >= 58% -> Moderate Match
+# < 58% -> Weak Match
 
 # ── Curated Skill Keywords ──────────────────────────────────────────────────
 SKILL_KEYWORDS = [
