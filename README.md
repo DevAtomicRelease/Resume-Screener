@@ -69,8 +69,8 @@ Score thresholds:
 | Label | Range |
 |---|---|
 | Strong Match | >= 75% |
-| Moderate Match | >= 58% |
-| Weak Match | < 58% |
+| Moderate Match | >= 52% |
+| Weak Match | < 52% |
 
 ---
 
