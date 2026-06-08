@@ -1,0 +1,18 @@
+[theme]
+base = "dark"
+primaryColor = "#6e00d5ff"
+backgroundColor = "#1b1d22ff"
+secondaryBackgroundColor = "#161B22"
+textColor = "#e6dbffff"
+font = "Source Sans Pro"
+
+[server]
+headless = true
+maxUploadSize = 200
+fileWatcherType = "poll"
+
+[client]
+showErrorDetails = false
+
+[browser]
+gatherUsageStats = false

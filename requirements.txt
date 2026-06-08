@@ -1,0 +1,10 @@
+streamlit>=1.38.0
+pandas
+numpy
+scikit-learn
+nltk
+sentence-transformers
+pdfplumber
+groq
+python-dotenv
+plotly
