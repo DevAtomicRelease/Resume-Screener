@@ -138,25 +138,25 @@ streamlit run app.py
 
 ## How It Works
 
-### Step 1 — Text Extraction
+### Step 1: Text Extraction
 
 PDF text is extracted using `pdfplumber`. The system reads each page and concatenates the output. Candidate names are detected by scanning the first five non-empty lines for a 2-4 word title-case pattern.
 
-### Step 2 — NLP Preprocessing
+### Step 2: NLP Preprocessing
 
 Text goes through a standard pipeline: lowercase conversion, removal of special characters, word tokenization (NLTK punkt), stopword removal, and WordNet lemmatization.
 
-### Step 3 — Semantic Embedding
+### Step 3: Semantic Embedding
 
 Both the preprocessed resume and job description are encoded into 384-dimensional vectors using `all-MiniLM-L6-v2`. This model captures contextual meaning rather than surface-level word overlap.
 
-### Step 4 — Skill Extraction
+### Step 4: Skill Extraction
 
 When a Groq API key is present, the LLM extracts required skills directly from the JD text at runtime. The system then checks the resume for those skills using exact-phrase and word-boundary matching, with a synonym map to handle alternate surface forms (e.g., "rag" matches "rag architectures", "sklearn" matches "scikit-learn").
 
 If no API key is provided, the system falls back to a curated static keyword list defined in `config.py`.
 
-### Step 5 — Composite Scoring
+### Step 5: Composite Scoring
 
 ```python
 score = (0.60 * semantic_similarity)
@@ -164,7 +164,7 @@ score = (0.60 * semantic_similarity)
       + (0.10 * keyword_overlap_ratio)
 ```
 
-### Step 6 — AI Assessment
+### Step 6: AI Assessment
 
 The LLM generates a structured per-candidate summary covering strengths, skill gaps, and a hiring recommendation. When no API key is available, a rule-based summary is generated from the matched and missing skill lists.
 
