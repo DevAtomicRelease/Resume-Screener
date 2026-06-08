@@ -389,28 +389,49 @@ def generate_candidate_summary(name: str, score: float, matched_skills: list[str
         client = Groq(api_key=api_key)
         resume_excerpt = resume_text[:2000]
         jd_excerpt = jd_text[:1500]
-        prompt = f"""Analyze this candidate for the given job and provide a concise, balanced hiring assessment.
-Please be forgiving if exact terminology is missing but the candidate demonstrates equivalent experience or transferable skills. Focus on their core foundational strengths and their potential to succeed in the role.
+
+        # Determine the score-driven verdict the LLM must follow
+        if score >= THRESHOLD_STRONG:
+            required_verdict = f"Strong Hire (score {score:.1f}% >= {THRESHOLD_STRONG}% threshold)"
+        elif score >= THRESHOLD_MODERATE:
+            required_verdict = f"Consider for Interview (score {score:.1f}% is between {THRESHOLD_MODERATE}% and {THRESHOLD_STRONG}%)"
+        else:
+            required_verdict = f"Not Recommended (score {score:.1f}% is below the {THRESHOLD_MODERATE}% minimum threshold)"
+
+        prompt = f"""You are evaluating a job application. The system has objectively scored this candidate using NLP and skill analysis. Your task is to write a structured assessment that is CONSISTENT with the score.
+
+OBJECTIVE SCORE: {score:.1f}%
+MATCHED SKILLS ({len(matched_skills)}): {', '.join(matched_skills) if matched_skills else 'None detected'}
+MISSING SKILLS ({len(missing_skills)}): {', '.join(missing_skills) if missing_skills else 'None'}
+
 CANDIDATE: {name}
-MATCH SCORE: {score:.1f}%
-MATCHED SKILLS: {', '.join(matched_skills) if matched_skills else 'None detected'}
-MISSING SKILLS: {', '.join(missing_skills) if missing_skills else 'None — full match'}
+
 JOB DESCRIPTION (excerpt):
 {jd_excerpt}
+
 RESUME (excerpt):
 {resume_excerpt}
+
+IMPORTANT: The composite score already accounts for semantic alignment, skill coverage, and keyword relevance. Your recommendation MUST match the score band:
+- Score >= {THRESHOLD_STRONG}%: Recommend 'Strong Hire'
+- Score {THRESHOLD_MODERATE}% to {THRESHOLD_STRONG - 1}%: Recommend 'Consider for Interview'
+- Score < {THRESHOLD_MODERATE}%: Recommend 'Not Recommended'
+
+For this candidate the required recommendation is: {required_verdict}
+
 Provide your assessment in EXACTLY this format:
-**Strengths:** (3-4 bullet points highlighting core competencies and potential)
-**Skill Gaps:** (1-2 bullet points framing gaps as areas for growth, or "None significant")
-**Recommendation:** (One sentence: Strong Hire / Good Match / Consider for Interview / Not Recommended. Lean towards 'Consider for Interview' if core foundations are met despite minor missing skills.)"""
+**Strengths:** (2-3 bullet points on what the candidate does well relative to this role)
+**Skill Gaps:** (2-3 bullet points on specific missing skills or experience gaps for this role)
+**Recommendation:** (One sentence matching the required recommendation above. Do NOT deviate from it.)"""
+
         response = client.chat.completions.create(
             messages=[
-                {"role": "system", "content": "You are an optimistic and supportive technical recruiter. You look for potential and transferable skills rather than rigidly punishing missing keywords. Be concise, balanced, and encouraging."},
+                {"role": "system", "content": "You are an objective technical recruiter. Your assessments are calibrated to the composite match score. You do not inflate recommendations — if the score indicates a weak match, you explain why the candidate falls short of the role's requirements. You are factual and specific, not generic or encouraging beyond what the evidence supports."},
                 {"role": "user", "content": prompt}
             ],
             model=GROQ_MODEL,
             max_tokens=GROQ_MAX_TOKENS,
-            temperature=0.6
+            temperature=0.3,
         )
         return response.choices[0].message.content
     except Exception as e:
@@ -425,6 +446,7 @@ def generate_fallback_summary(
 ) -> str:
     """
     Generate a rule-based candidate summary (no API required).
+    Recommendation is strictly driven by the composite score band.
     """
     # Strengths
     if matched_skills:
@@ -434,17 +456,17 @@ def generate_fallback_summary(
 
     # Gaps
     if missing_skills:
-        gaps = f"- Missing key skills: {', '.join(missing_skills[:6])}"
+        gaps = f"- Missing key skills required for this role: {', '.join(missing_skills[:6])}"
     else:
         gaps = "- No significant skill gaps detected"
 
-    # Recommendation
+    # Recommendation — strictly follows the score band
     if score >= THRESHOLD_STRONG:
-        rec = "**Strong candidate** — recommend for technical interview."
+        rec = "Strong Hire — candidate meets or exceeds the required skill and semantic threshold. Recommend for technical interview."
     elif score >= THRESHOLD_MODERATE:
-        rec = "**Potential fit** — consider for screening call to assess depth."
+        rec = "Consider for Interview — candidate shows partial alignment. Recommend a screening call to assess depth on missing areas."
     else:
-        rec = "**Weak alignment** — significant gaps for this particular role."
+        rec = "Not Recommended — composite score is below the minimum threshold. Significant skill and domain gaps exist for this role."
 
     return f"**Strengths:**\n{strengths}\n\n**Skill Gaps:**\n{gaps}\n\n**Recommendation:** {rec}"
 
