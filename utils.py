@@ -392,22 +392,11 @@ def generate_candidate_summary(name: str, score: float, matched_skills: list[str
     """
     # ── Deterministic recommendation (never delegated to the LLM) ──────────
     if score >= THRESHOLD_STRONG:
-        recommendation = (
-            f"Strong Hire — composite score of {score:.1f}% meets the strong match "
-            f"threshold (>= {THRESHOLD_STRONG}%). Recommend for technical interview."
-        )
+        recommendation = "Strong Hire — candidate meets or exceeds the required skill and semantic threshold. Recommend for technical interview."
     elif score >= THRESHOLD_MODERATE:
-        recommendation = (
-            f"Consider for Interview — composite score of {score:.1f}% falls within "
-            f"the moderate range ({THRESHOLD_MODERATE}%–{THRESHOLD_STRONG - 1}%). "
-            f"Recommend a screening call to assess depth on missing areas."
-        )
+        recommendation = "Consider for Interview — candidate shows partial alignment. Recommend a screening call to assess depth on missing areas."
     else:
-        recommendation = (
-            f"Not Recommended — composite score of {score:.1f}% is below the minimum "
-            f"threshold of {THRESHOLD_MODERATE}%. Significant skill and domain gaps "
-            f"exist for this role."
-        )
+        recommendation = "Not Recommended — significant skill and domain gaps exist for this role."
 
     try:
         # pyrefly: ignore [missing-import]
@@ -495,7 +484,7 @@ def generate_fallback_summary(
     elif score >= THRESHOLD_MODERATE:
         rec = "Consider for Interview — candidate shows partial alignment. Recommend a screening call to assess depth on missing areas."
     else:
-        rec = "Not Recommended — composite score is below the minimum threshold. Significant skill and domain gaps exist for this role."
+        rec = "Not Recommended — significant skill and domain gaps exist for this role."
 
     return f"**Strengths:**\n{strengths}\n\n**Skill Gaps:**\n{gaps}\n\n**Recommendation:** {rec}"
 
