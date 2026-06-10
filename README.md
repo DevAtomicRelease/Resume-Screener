@@ -1,4 +1,4 @@
-# AI-Powered Resume Screening & Candidate Ranking System
+# Screening & Candidate Ranking System
 
 An intelligent Streamlit dashboard that analyzes resumes against job descriptions using NLP, Sentence Transformers, and Generative AI to rank candidates and generate structured hiring recommendations.
 
